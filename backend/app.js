@@ -7,7 +7,9 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const config = require("./config/");
 require("express-async-errors");
-const test = require("./routes");
+const routes = require("./routes");
+const { ValidationError } = require("sequelize");
+// start of app
 const app = express();
 const isProduction = config.environment === "production";
 //setting security headers and helpers
@@ -26,5 +28,34 @@ app.use(
     },
   })
 );
-app.use("/", test);
+// All Routers
+app.use("/", routes);
+// 404 catcher
+app.use((req, res, next) => {
+  const err = new Error("The requested resource couldn't be found .");
+  err.title = "Resource Not Found";
+  err.errors = ["The requested resource couldn't be found."];
+  err.status = 404;
+  next(err);
+});
+// error handlers
+// process sequelize errors to make it more readable
+app.use((err, req, res, next) => {
+  if (err instanceof ValidationError) {
+    err.errors = err.errors.map((r) => r.message);
+    err.title = "Validation Error Sequelize ";
+  }
+  err.status = 500;
+  next(err);
+});
+app.use((err, req, res, nex) => {
+  console.error(err.message);
+  res.status(err.status || 500).json({
+    title: err.title,
+    message: err.message,
+    status: "failure",
+    errors: err.errors,
+    stack: isProduction ? null : err.stack,
+  });
+});
 module.exports = app;
