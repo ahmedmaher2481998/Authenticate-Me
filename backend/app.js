@@ -7,18 +7,24 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const config = require("./config/");
 require("express-async-errors");
-
+const test = require("./routes");
 const app = express();
-const isProduction = "production" === config.environment;
-const PORT = process.env.PORT || 5000;
-
+const isProduction = config.environment === "production";
+//setting security headers and helpers
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
+// only in dev env
+if (!isProduction) app.use(cors({ origin: "http://localhost:3000" }));
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(
-  cors({
-    origin: isProduction ? "productionUrl" : "http://localhost:8000",
+  csurf({
+    cookie: {
+      secure: isProduction,
+      sameSite: isProduction && "lax",
+      httpOnly: true,
+    },
   })
 );
-
-app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
+app.use("/", test);
+module.exports = app;

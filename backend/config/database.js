@@ -2,11 +2,7 @@ const config = require("./index");
 
 module.exports = {
   development: {
-    // username: "root",
-    // password: null,
-    // database: process.env.DATABASE_FILE,
-    // host: "127.0.0.1",
-    Storage: config.dbFile,
+    storage: config.dbFile,
     dialect: "sqlite",
     seederStorage: "sequelize",
     logQueryParameters: true,

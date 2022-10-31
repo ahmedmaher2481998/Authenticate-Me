@@ -4,7 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "sequelize": "sequelize",
+    "sequelize-cli": "sequelize-cli",
+    "migrate": "npx sequelize db:migrate:all",
+    "seed-all": "npx sequelize db:seed:all",
+    "undo-migrate": "npx sequelize db:migrate:undo:all",
+    "undo-seed-all": "npx sequelize db:seed:undo:all",
+    "start": "per-env",
+    "start:development": "nodemon ./bin/www",
+    "start:production": "node ./bin/www"
   },
   "keywords": [],
   "author": "",
