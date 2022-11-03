@@ -16,9 +16,23 @@ const setToken = (res, user) => {
   });
   return token;
 };
-
+// it takes req,res and verify token if auth it adds user to req ,else
+// if user didn't exist it clears cookie
 const restoreUser = (req, res, next) => {
+  // token parsed from cookies
   const { token } = req.cookie;
+  const isAuth = jwt.verify(token, secret, {}, async (err, jwtPayload) => {
+    if (err) return next(err);
+    try {
+      const { id } = jwtPayload;
+      req.user = await User.scope("currentUser").findByPk(id);
+    } catch (error) {
+      res.clearCookie("token");
+      next();
+    }
+    if (!req.user) res.clearCookie("token");
+    return next();
+  });
 };
 
 module.exports = { setToken };
