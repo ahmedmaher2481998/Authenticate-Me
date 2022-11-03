@@ -14,14 +14,14 @@ module.exports = (sequelize, DataTypes) => {
     getCurrentUserById(id) {
       return User.scope("currentUser").findByPk(id);
     }
-    static async login({ credentials, password }) {
+    static async login({ credential, password }) {
       const { Op } = require("sequelize");
       const user = await User.scope("loginUser").findOne({
         where: {
           [Op.or]: {
             // when username match or email match
-            username: credentials,
-            email: credentials,
+            username: credential,
+            email: credential,
           },
         },
       });

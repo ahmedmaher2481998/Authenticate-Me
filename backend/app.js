@@ -44,16 +44,17 @@ app.use((err, req, res, next) => {
   if (err instanceof ValidationError) {
     err.errors = err.errors.map((r) => r.message);
     err.title = "Validation Error Sequelize ";
+    err.status = 500;
   }
-  err.status = 500;
   next(err);
 });
 app.use((err, req, res, nex) => {
   console.error(err.message);
-  res.status(err.status || 500).json({
+  const code = err.status || 500;
+  console.log(err.status);
+  res.status(code).json({
     title: err.title,
     message: err.message,
-    status: "failure",
     errors: err.errors,
     stack: isProduction ? null : err.stack,
   });
