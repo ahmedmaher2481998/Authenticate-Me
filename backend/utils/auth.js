@@ -2,9 +2,9 @@ const jwt = require("jsonwebtoken");
 const { jwtConfig } = require("../config");
 const { User } = require("../db/models");
 const { expiresIn, secret } = jwtConfig;
-const setToken = (res, user) => {
+const setTokenCookie = (res, user) => {
   // create the token
-  const token = jwt.sign({ payload: user.toSafeObject() }, secret, {
+  const token = jwt.sign({ ...user.toSafeObject() }, secret, {
     expiresIn: parseInt(expiresIn), //in one week
   });
   const isProduction = process.env.NODE_ENV === "production";
@@ -20,8 +20,9 @@ const setToken = (res, user) => {
 // if user didn't exist it clears cookie
 const restoreUser = (req, res, next) => {
   // token parsed from cookies
-  const { token } = req.cookie;
-  const isAuth = jwt.verify(token, secret, {}, async (err, jwtPayload) => {
+
+  const { token } = req.cookies;
+  return jwt.verify(token, secret, {}, async (err, jwtPayload) => {
     if (err) return next(err);
     try {
       const { id } = jwtPayload;
@@ -34,5 +35,18 @@ const restoreUser = (req, res, next) => {
     return next();
   });
 };
+const requireAuth = [
+  restoreUser,
+  (req, res, next) => {
+    if (req.user) {
+      return next();
+    } else {
+      const err = new Error("Unauthorized");
+      err.errors = ["Unauthorized"];
+      err.status = 401;
+      return next(err);
+    }
+  },
+];
 
-module.exports = { setToken };
+module.exports = { setTokenCookie, restoreUser, requireAuth };
