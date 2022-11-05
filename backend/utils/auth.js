@@ -16,6 +16,7 @@ const setTokenCookie = (res, user) => {
   });
   return token;
 };
+
 // it takes req,res and verify token if auth it adds user to req ,else
 // if user didn't exist it clears cookie
 const restoreUser = (req, res, next) => {
