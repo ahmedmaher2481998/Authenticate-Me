@@ -5,7 +5,7 @@ const apiRouter = require("./api");
 
 router.use("/api", apiRouter);
 
-router.get("/hello/world", (req, res) => {
+router.get("/", (req, res) => {
   res.cookie("XSRF-Token", req.csrfToken());
   res.send("Hello world From the main route... ");
 });

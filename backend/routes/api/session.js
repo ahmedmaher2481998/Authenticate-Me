@@ -17,7 +17,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/", (res, req) => {
+router.delete("/", (   res, req) => {
   console.log(res.clearCookie("token"));
   res.json({ message: "success" });
 });
