@@ -4,14 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "sequelize": "sequelize",
-    "sequelize-cli": "sequelize-cli",
     "migrate": "npx sequelize db:migrate",
     "u-migrate": "npx sequelize db:migrate:undo",
     "seed-all": "npx sequelize db:seed:all",
     "u-seed-all": "npx sequelize db:seed:undo:all",
+    "sequelize": "sequelize",
+    "sequelize-cli": "sequelize-cli",
     "start": "per-env",
-    "start:development": "nodemon ./bin/www",
+    "start:development": "nodemon -r dotenv/config ./bin/www",
     "start:production": "node ./bin/www"
   },
   "keywords": [],
