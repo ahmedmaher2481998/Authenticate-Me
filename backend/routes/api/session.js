@@ -1,7 +1,11 @@
 const router = require("express").Router();
 const { User } = require("../../db/models");
+const {
+  jwtConfig: { expiresIn },
+} = require("../../config");
 const { setTokenCookie, restoreUser } = require("../../utils/auth");
-
+const isProduction = process.env.NODE_ENV === "production";
+// log in
 router.post("/", async (req, res, next) => {
   const { credential, password } = req.body;
   const user = await User.login({ credential, password });
@@ -16,9 +20,10 @@ router.post("/", async (req, res, next) => {
     next(err);
   }
 });
-
-router.delete("/", (   res, req) => {
-  console.log(res.clearCookie("token"));
+// log out doesn't work yet
+router.delete("/", (req, res) => {
+  res.clearCookie("token");
   res.json({ message: "success" });
 });
+
 module.exports = router;

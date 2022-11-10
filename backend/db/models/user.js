@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
     static async signUp({ username, email, password }) {
+      console.log("sign up" + username, email, password);
       const hashedPassword = bcrypt.hashSync(password);
       const user = await User.create({
         username,
@@ -66,12 +67,14 @@ module.exports = (sequelize, DataTypes) => {
               throw new Error("UserName has to be under 30 Char ");
             }
           },
-          isNoEmail: (value) => {
-            if (validator.isEmail(value)) {
-              throw new Error("User Name can;t be an email ");
-            }
-          },
-          not: /.*@.*\..*/gi,
+          isEmail: false,
+          // isNoEmail: (value) => {
+          //   const { validator } = require("sequelize");
+          //   if (validator.is(value)) {
+          //     throw new Error("User Name can;t be an email ");
+          //   }
+          // },
+          not: [/.*@.*\..*/gi],
         },
       },
       email: {

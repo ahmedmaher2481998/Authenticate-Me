@@ -13,7 +13,7 @@ router.post("/test", (req, res) => {
   res.json({ requestBody: req.body });
 });
 router.use("/session", sessionRouter);
-router.use("/user", userRouter);
+router.use("/users", userRouter);
 
 router.get("/csrf/restore", (req, res) => {
   const csrfToken = req.csrfToken();
