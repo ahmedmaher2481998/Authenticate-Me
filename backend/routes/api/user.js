@@ -11,7 +11,6 @@ router.get("/", async (req, res, next) => {
 });
 const signUpValidator = [
   check("username")
-    .notEmpty()
     .exists({ checkFalsy: true })
     .withMessage("username is required"),
   check("username")
@@ -19,18 +18,14 @@ const signUpValidator = [
     .withMessage("username must be more than 4 char long"),
   check("username").not().isEmail().withMessage("username can't be an email"),
   check("password")
-    .notEmpty()
     .exists({ checkFalsy: true })
     .withMessage("password is required"),
 
   check("password")
     .isLength({ min: 6 })
     .withMessage("password must be more than 6 chars long"),
-  ,
-  check("email")
-    .notEmpty()
-    .exists({ checkFalsy: true })
-    .withMessage("email is required"),
+
+  check("email").exists({ checkFalsy: true }).withMessage("email is required"),
   check("email").isEmail().withMessage("invalid email"),
   validationErrorHandler,
 ];
