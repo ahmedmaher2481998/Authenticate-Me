@@ -22,18 +22,22 @@ const setTokenCookie = (res, user) => {
 const restoreUser = (req, res, next) => {
   // token parsed from cookies
   const { token } = req.cookies;
-  return jwt.verify(token, secret, {}, async (err, jwtPayload) => {
-    if (err) return next(err);
-    try {
-      const { id } = jwtPayload;
-      req.user = await User.scope("currentUser").findByPk(id);
-    } catch (error) {
-      res.clearCookie("token");
-      next();
-    }
-    if (!req.user) res.clearCookie("token");
+  if (token) {
+    return jwt.verify(token, secret, {}, async (err, jwtPayload) => {
+      if (err) return next(err);
+      try {
+        const { id } = jwtPayload;
+        req.user = await User.scope("currentUser").findByPk(id);
+      } catch (error) {
+        res.clearCookie("token");
+        next();
+      }
+      if (!req.user) res.clearCookie("token");
+      return next();
+    });
+  } else {
     return next();
-  });
+  }
 };
 const requireAuth = [
   restoreUser,

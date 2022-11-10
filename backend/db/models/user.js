@@ -30,13 +30,14 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
     static async signUp({ username, email, password }) {
-      console.log("sign up" + username, email, password);
-      const hashedPassword = bcrypt.hashSync(password);
-      const user = await User.create({
+      console.log("sign up: =>" + username, email, password);
+      const user = User.build({
         username,
         email,
-        hashedPassword,
+        hashedPassword: bcrypt.hashSync(password),
       });
+      await user.save();
+      console.log(user);
       return await User.scope("currentUser").findByPk(user.id);
     }
 
@@ -58,16 +59,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           len: [4, 30],
-          isEmail: false,
-          isNull: false,
-          isLessTHan30Char: (values) => {
-            const isLessThan30Char = values.split("").length < 30;
-            const isMoreThan4Char = values.split("").length > 4;
-            if (!isLessThan30Char && !isMoreThan4Char) {
-              throw new Error("UserName has to be under 30 Char ");
-            }
-          },
-          isEmail: false,
+          // isEmail: false,
+          // isLessTHan30Char: (values) => {
+          //   const isLessThan30Char = values.split("").length < 30;
+          //   const isMoreThan4Char = values.split("").length > 4;
+          //   if (!isLessThan30Char && !isMoreThan4Char) {
+          //     throw new Error("UserName has to be under 30 Char ");
+          //   }
+          // },
+
           // isNoEmail: (value) => {
           //   const { validator } = require("sequelize");
           //   if (validator.is(value)) {
@@ -81,10 +81,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(256),
         allowNull: false,
         unique: true,
+        isEmail: true,
         validate: {
           len: [3, 256],
-          isNull: false,
-          isEmail: true,
         },
       },
       hashedPassword: {

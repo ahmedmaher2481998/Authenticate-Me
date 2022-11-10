@@ -4,6 +4,7 @@ const {
   jwtConfig: { expiresIn },
 } = require("../../config");
 const { setTokenCookie, restoreUser } = require("../../utils/auth");
+const { json } = require("sequelize");
 const isProduction = process.env.NODE_ENV === "production";
 // log in
 router.post("/", async (req, res, next) => {
@@ -20,10 +21,15 @@ router.post("/", async (req, res, next) => {
     next(err);
   }
 });
-// log out doesn't work yet
+// log out
 router.delete("/", (req, res) => {
   res.clearCookie("token");
   res.json({ message: "success" });
+});
+// Get Session User
+router.get("/", restoreUser, (req, res) => {
+  const { user = {} } = req;
+  res.json({ user });
 });
 
 module.exports = router;
