@@ -51,7 +51,6 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, nex) => {
   console.error(err.message);
   const code = err.status || 500;
-  console.log(err.status);
   res.status(code).json({
     title: err.title,
     message: err.message,
